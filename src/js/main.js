@@ -39,8 +39,10 @@ import {writeUserData,enviarConvalidacionAFirebase, readPost} from './app.js'
      const loginPass = password.value;
      if (loginEmail != "" && loginPass != "") {
          login(loginEmail, loginPass);
-     } else {
-         document.getElementById('loginError').innerHTML = "Debes ingresar tu email y password"
+     }if (loginEmail != "@" && loginPass !== ""){
+        document.getElementById('loginError').innerHTML = "Debes ingresar un correo electrónico valido."
+     }else {
+         document.getElementById('loginError').innerHTML = "Debes ingresar un email y contraseña para ingresar."
 
      }
 
@@ -76,10 +78,21 @@ import {writeUserData,enviarConvalidacionAFirebase, readPost} from './app.js'
      const title = tituloaconvalidar.value;
      const coment = coments.value;
      const userId = firebase.auth().currentUser.uid;
-     const photo =  fichero.value
+     const tags = hashtagsPost.value;
+    // const photo =  fichero.value
 
-     enviarConvalidacionAFirebase(userId, name, title, coment, photo)
-     uploadImgtoFirebase()
+     enviarConvalidacionAFirebase(userId,name,title,coment,tags)
+    // uploadImgtoFirebase()
+
+    if ( name == ""){
+        alert(` Se deben rellenar todos los campos para poder publicar` )
+    }if ( title == ""){
+        alert(` Se deben rellenar todos los campos para poder publicar` ) 
+    }if ( coment == ""){
+        alert(` Se deben rellenar todos los campos para poder publicar` )
+    }if ( tags == ""){
+        alert(` Se deben rellenar todos los campos para poder publicar` )
+    }
  }
 
  btnComents.addEventListener('click', guardarComentarios)
@@ -87,17 +100,20 @@ import {writeUserData,enviarConvalidacionAFirebase, readPost} from './app.js'
 
  const readPostFromDatabase = () => {
      readPost((coment) => {
-         newcoments.innerHTML +=
+    let miFechaActual = new Date() 
+      newcoments.innerHTML =
              `
              <div class="box text" id="${coment.key}">
                         <div class="box-header">
-                          <span>${coment.val().author}<span>
+                          <p>${coment.val().author}<p>
+                          <p> ${miFechaActual}<p>
                          </div>
                         <div class="box-content">
                           <div class="content">
-                            <h3>${coment.val().body}</h3>
+                          <h4>${coment.val().title}</h4>
+                            <p>${coment.val().body}</p>
                           </div>
-                          <p>${coment.val().title}</p>
+                          <p id="hashtag">${coment.val().hashtag}</p>
                         </div>
                         <div class="box-buttons">
                           <div class="row">
@@ -108,12 +124,36 @@ import {writeUserData,enviarConvalidacionAFirebase, readPost} from './app.js'
                         </div>
                       </div> 
 
-       `;//document.getElementById(coment.key).addEventListener('click', deletePost)
+       ` + newcoments.innerHTML ; 
+       
+       if ( coment.val().hashtag == "#receta") {
+        recipes_post.innerHTML =`        
+        <div class="box text" id="${coment.key}">
+        <div class="box-header">
+          <span>${coment.val().author}<span>
+         </div>
+        <div class="box-content">
+          <div class="content">
+          <h4>${coment.val().title}</h4>
+            <p>${coment.val().body}</p>
+          </div>
+          <p id="hashtag">${coment.val().hashtag}</p>
+        </div>
+        <div class="box-buttons">
+          <div class="row">
+            <button><span class="fa fa-thumbs-up"></span> Like</button>
+            <button><span class="ion-chatbox-working"></span> Comment</button>
+            
+          </div>
+        </div>
+      </div> ` +recipes_post.innerHTML   
+    }      
+       
+       //document.getElementById(coment.key).addEventListener('click', deletePost)
      });
+
+     
  }
-
-
-
 
 
 const showUserInfo = () => {

@@ -10,7 +10,6 @@ export const checkAuthState =(callback) =>{
             console.log("Hay un usuario >" )//+ JSON.stringify(firebaseUser)
            
             writeUserData(firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, firebase.auth().currentUser.email,firebase.auth().currentUser.photoURL)
-            
             ;
             callback(firebaseUser)
         }else{
